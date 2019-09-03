@@ -1,4 +1,11 @@
 start
 if
-var
+for
+while
+for
+do
+int
+double
+string
+else
 end
