@@ -1,12 +1,15 @@
 # Compilador
 Aplicação feita em __*Python*__ para a aula de __*Compiladores*__
+
+---
+
 ### Fase 1
 __Análise Léxica__:
 * Definição de padrões através do uso de palavras-chave
 * Implementação do Autômato Finito Determinístico para interpretação da linguagem proposta
 * Fluxo de caracteres é lido da esquerda para a direita e agrupado em tokens;
 * Forma a gramática
-
+---
 ### Fase 2
 __Análise Sintática__:
 Agrupamento de tokens de forma hierarquica em coleções aninhadas com significado coletivo, ou seja, algo que foi declarado em linha deve fazer sentido em código.
@@ -16,14 +19,14 @@ Agrupamento de tokens de forma hierarquica em coleções aninhadas com significa
 * Análise Bottom-Up, LR parsing.
 * Definição Dirigida pela Sintaxe;
 * Esquema de Tradução
-
+---
 ### Fase 3
 __Análise Semântica__:
 Realiza verificações a fim de assegurar que os componentes de um programa combinam de forma significativa.
 * Coleta informações sobre tipos de identificadores e expressões;
 * Verifica a consistência das operações do programa fonte de acordo com a definição da linguagem.
 * Verificação de tipos.
-
+---
 ### Definições
 __Linguagem__:
 ```
