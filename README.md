@@ -8,7 +8,7 @@ __Análise Léxica__:
 * Definição de padrões através do uso de palavras-chave
 * Implementação do Autômato Finito Determinístico para interpretação da linguagem proposta
 
-![AFD](https://i.imgur.com/UEwzqFk.png)
+![AFD](afd.png)
 
 * Fluxo de caracteres é lido da esquerda para a direita e agrupado em tokens;
 * Forma a gramática
