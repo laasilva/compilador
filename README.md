@@ -7,7 +7,9 @@ Aplicação feita em __*Python*__ para a aula de __*Compiladores*__
 __Análise Léxica__:
 * Definição de padrões através do uso de palavras-chave
 * Implementação do Autômato Finito Determinístico para interpretação da linguagem proposta
-![AFD](https://imgur.com/a/3oP3pWh)
+
+![AFD](https://i.imgur.com/UEwzqFk.png)
+
 * Fluxo de caracteres é lido da esquerda para a direita e agrupado em tokens;
 * Forma a gramática
 
