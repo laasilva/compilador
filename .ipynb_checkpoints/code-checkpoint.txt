@@ -1,11 +1,11 @@
-class CodigoPyscal : 
-    def void () :
-        integer num1 ;
-        bool ex = true ;
-        while(ex) :
-            num = num + 1 ;
-            if(num == 5) :
-                ex = false ;
-        end ;
-    end ;
-end .
+class CodigoPyscal:  
+    def void(): 
+        integer num1; 
+        bool ex = true; 
+        while(ex): 
+            num = num + 1; 
+            if(num == 5): 
+                ex = false; 
+        end; 
+    end; 
+end. 

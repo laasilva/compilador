@@ -33,5 +33,5 @@ OP_MULT,"*"
 OP_SUB,"-"
 OP_PLUS,"+"
 OP_EXCL,"!"
-OP_TRUE, "true"
-OP_FALSE, "false"
+OP_TRUE, true
+OP_FALSE, false
