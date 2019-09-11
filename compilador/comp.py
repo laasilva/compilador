@@ -7,12 +7,14 @@ from interpreter import interpreter
 
 class main:
 
-    ts = pd.read_csv("tokens.csv", header=[0], sep=',')
+    kws = pd.read_csv("ts_keywords.csv", header=[0], sep=',')
+    ops = pd.read_csv("ts_operators.csv", header=[0], sep=',')
+    ids = pd.read_csv("ts_ids.csv", header=[0], sep=',')
 
     code = []
     file = 'code.txt'
 
-    it = reader(file, ts, code)
+    it = reader(file, code)
 
     it.read()
 
@@ -20,10 +22,20 @@ class main:
 
     print(code)
 
+    # montar array bidimencional para armazenar o lexema encontrado
+    # e seu token (keyword, operando ou id)
+    # também identificar posição e se contém algum erro 
+
+    intrp = interpreter(kws, ops, ids, code)
+
+
+    keys = intrp.find_keywords()
+
+    print(keys)
+
+    operators = intrp.find_operators()
+
+    print(operators)
+
     # array de palavras em código montado
     # fazer análise com tokens e retirar palavras chave de usuário
-
-    for c in code:
-        for i, row in ts.iterrows():
-            if(c == row['lexema']):
-                print('<' + row['token'] + ', "' + row['lexema'] + '">')

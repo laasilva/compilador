@@ -1,14 +1,14 @@
 import pandas as pd
 
 class reader:
-    def __init__(self, file, ts, code):
+    def __init__(self, file, code):
         self.__file = file
-        self.__ts = ts
         self.__code = code
     
     # Lê o arquivo de código e monta array com as palavras, números e simbolos encontrados
     def read(self):
         word = ''
+        # contador de linha e coluna
         with open(self.__file) as fp:
             w = fp.read()
             for c in w:
