@@ -36,7 +36,7 @@ __Linguagem__:
 ```
 Programa → Classe EOF
 Classe → "class" ID ":" ListaFuncao Main "end" "."
-DeclaraID → TipoPrimitivo ID ";"
+DeclaraID → TipoPrimitivo ID ";" | TipoPrimitivo CmdAtribui ";"
 ListaFuncao → ListaFuncao Funcao | ε
 Funcao → "def" TipoPrimitivo ID "(" ListaArg ")" ":" (DeclaraID)∗ ListaCmd Retorno "end" ";"
 ListaArg → Arg "," ListaArg | Arg
