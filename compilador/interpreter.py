@@ -1,9 +1,12 @@
+import pandas as pd
+
 class interpreter:
-    def __init__(self, kws, ops, ids, code):
-        self.__kws = kws
-        self.__ops = ops
-        self.__ids = ids
-        self.__code = code
+    def __init__(self):
+        self.__code = []
+
+        self.__kws = pd.read_csv("ts_keywords.csv", header=[0], sep=',')
+        self.__ops = pd.read_csv("ts_operators.csv", header=[0], sep=',')
+        self.__ids = pd.read_csv("ts_ids.csv", header=[0], sep=',')
 
         self.__kwlist = []
         self.__oplist = []
@@ -21,3 +24,23 @@ class interpreter:
                 if(o == row['lexema']):
                     self.__oplist.append(o)
         return self.__oplist
+
+    def get_keyword(self, word):
+        kw = False
+        for i, row in self.__kws.iterrows():
+                if(word == row['lexema']):
+                    kw = True
+                    break
+                else:
+                    kw = False
+        return kw
+
+    def get_operator(self, word):
+        op = False
+        for i, row in self.__ops.iterrows():
+                if(word == row['lexema']):
+                    op = True
+                    break
+                else:
+                    op = False
+        return op

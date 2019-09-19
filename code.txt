@@ -8,4 +8,4 @@ class CodigoPyscal:
                 ex = false; 
         end; 
     end; 
-end. 
+end.

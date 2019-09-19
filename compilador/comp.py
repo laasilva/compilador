@@ -7,10 +7,6 @@ from interpreter import interpreter
 
 class main:
 
-    kws = pd.read_csv("ts_keywords.csv", header=[0], sep=',')
-    ops = pd.read_csv("ts_operators.csv", header=[0], sep=',')
-    ids = pd.read_csv("ts_ids.csv", header=[0], sep=',')
-
     code = []
     file = 'code.txt'
 
@@ -26,16 +22,16 @@ class main:
     # e seu token (keyword, operando ou id)
     # também identificar posição e se contém algum erro 
 
-    intrp = interpreter(kws, ops, ids, code)
+    #intrp = interpreter(kws, ops, ids, code)
 
 
-    keys = intrp.find_keywords()
+    #keys = intrp.find_keywords()
 
-    print(keys)
+    #print(keys)
 
-    operators = intrp.find_operators()
+    #operators = intrp.find_operators()
 
-    print(operators)
+    #print(operators)
 
     # array de palavras em código montado
     # fazer análise com tokens e retirar palavras chave de usuário
