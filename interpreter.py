@@ -1,0 +1,204 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Sep 26 20:16:00 2019
+
+@author: cmdrlias
+"""
+import sys
+
+from ts import ts
+from token_model import token_model as tkm
+from tag import tag
+from colors import colors as clr
+
+class interpreter:
+    def __init__(self, file):
+        try:
+            self._file = open(file, 'rb')
+            self._lookahead = 0
+            self._nline = 1
+            self._ncolumn = 1
+            self._ts = ts()
+            self._sts = True
+            self._erros = 0
+        except IOError:
+            print(clr.FAIL + 'FATAL! Erro ao ler arquivo de código.')
+            sys.exit(0)
+        
+    def closeFile(self):
+        try:
+            self._file.close()
+        except IOError:
+            print(clr.FAIL + 'FATAL! Erro ao fechar arquivo de código.')
+            sys.exit(0)
+    
+    def erroLexico(self, msg):
+        print(clr.FAIL + '[Erro lexico]: ' + msg + '\n' + clr.ENDC)
+        self._sts = False
+        self._erros += 1
+
+    def printTabelaDeSimbolos(self):
+        self._ts.printTS()
+    
+    def proximoToken(self):
+        state = 0
+        word = ""
+        char = '\u0000' 
+        lookahead = True
+
+        while(True):
+            if(lookahead):
+                self._lookahead = self._file.read(1)
+                char = self._lookahead.decode('ascii')
+            lookahead = True
+            if(state == 0):
+                if(char == ''):
+                    return tkm(tag.EOF, "EOF", self._nline, self._ncolumn)
+                elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
+                    state = 0
+                elif(char.isalpha()):
+                    word += char
+                    state = 2
+                elif(char.isdigit()):
+                    word += char
+                    state = 3
+                elif(char == '='):
+                    state = 4
+                elif(char == '+'):
+                    state = 5
+                elif(char == '-'):
+                    state = 6
+                elif(char == '*'):
+                    state = 7
+                elif(char == '/'):
+                    state = 8
+                elif(char == '['):
+                    state = 9
+                elif(char == ']'):
+                    state = 10
+                elif(char == '('):
+                    lookahead = False
+                    state = 11
+                elif(char == ')'):
+                    state = 12
+                elif(char == '.'):
+                    state = 13
+                elif(char == ','):
+                    state = 14
+                elif(char == ':'):
+                    state = 15
+                elif(char == ';'):
+                    state = 16
+                elif(char == '<'):
+                    state = 17
+                elif(char == '>'):
+                    state = 18
+                elif(char == '!'):
+                    state = 19
+                elif(char == 'and'):
+                    state = 20
+                elif(char == 'or'):
+                    state = 21
+                elif(char == 'true'):
+                    state = 22
+                elif(char == 'false'):
+                    state = 23
+                else:
+                    self.erroLexico('Caractere [' + char + '] inválido. (' + str(self._nline) + 
+                                    ',' + str(self._ncolumn) + ')')
+            elif(state == 2):
+                if(char.isalnum()):
+                    word += char
+                else:
+                    self.getPonteiro()
+                    tk = self._ts.getToken(word)
+                    if(tk is None):
+                        tk = tkm(tag.ID, word, self._nline, self._ncolumn)
+                        self._ts.addToken(word, tk)
+                    return tk
+            elif(state == 3):
+                if(char.isdigit()):
+                    word += char          
+                else:
+                    self.getPonteiro()
+                    tk = self._ts.getToken(word)
+                    if(tk is None):
+                        tk = tkm(tag.NUM, word, self._nline, self._ncolumn)
+                        self._ts.addToken(word, tk)
+                    return tk
+            elif(state == 4):
+                if(char == '='):
+                    return tkm(tag.OP_EQL, '==', self._nline, self._ncolumn)
+                elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
+                    return tkm(tag.OP_ATR, '=', self._nline, self._ncolumn)
+                else:
+                    self.erroLexico('Caractere [' + char + '] inválido em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
+                    return None
+                return tkm(tag.OP_EQL, '=', self._nline, self._ncolumn)
+            elif(state == 5):
+                return tkm(tag.OP_PLUS, '+', self._nline, self._ncolumn)
+            elif(state == 6):
+                return tkm(tag.OP_SUB, '-', self._nline, self._ncolumn)
+            elif(state == 7):
+                return tkm(tag.OP_MULT, '*', self._nline, self._ncolumn)
+            elif(state == 8):
+                return tkm(tag.OP_SLSH, '/', self._nline, self._ncolumn)
+            elif(state == 9):
+                return tkm(tag.OP_OBRACK, '[', self._nline, self._ncolumn)
+            elif(state == 10):
+                return tkm(tag.OP_CBRACK, ']', self._nline, self._ncolumn)
+            elif(state == 11):
+                return tkm(tag.OP_OPAR, '(', self._nline, self._ncolumn)
+            elif(state == 12):
+                return tkm(tag.OP_CPAR, ')', self._nline, self._ncolumn)
+            elif(state == 13):
+                return tkm(tag.OP_DOT, '.', self._nline, self._ncolumn)
+            elif(state == 14):
+                return tkm(tag.OP_COMMA, ',', self._nline, self._ncolumn)
+            elif(state == 15):
+                return tkm(tag.OP_COL, ':', self._nline, self._ncolumn)
+            elif(state == 16):
+                return tkm(tag.OP_SCOL, ';', self._nline, self._ncolumn)
+            elif(state == 17):
+                if(char == '='):
+                    return tkm(tag.OP_EQL, '<=', self._nline, self._ncolumn)
+                else:
+                    return tkm(tag.OP_LESS, '<', self._nline, self._ncolumn)
+            elif(state == 18):
+                if(char == '='):
+                    return tkm(tag.OP_GRTEQ, '>=', self._nline, self._ncolumn)
+                else:
+                    return tkm(tag.OP_GRTR, '>', self._nline, self._ncolumn)
+            elif(state == 19):
+                if(char == '='):
+                    return tkm(tag.OP_DIF, '!=', self._nline, self._ncolumn)
+                else:
+                    return tkm(tag.OP_GRTR, '!', self._nline, self._ncolumn)
+            elif(state == 20):
+                return tkm(tag.OP_AND, 'and', self._nline, self._ncolumn)
+            elif(state == 21):
+                return tkm(tag.OP_OR, 'or', self._nline, self._ncolumn)
+            elif(state == 22):
+                return tkm(tag.OP_TRUE, 'true', self._nline, self._ncolumn)
+            elif(state == 23):
+                return tkm(tag.OP_FALSE, 'false', self._nline, self._ncolumn)
+            # elif(state == 4):
+            #     if(char == '='):
+            #         return tkm(tag.OP_EQL, '==', self._nline, self._ncolumn)
+            #     else:
+            #         self.erroLexico('Caractere [' + char + '] inválido em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
+            #         return None
+        
+
+    def getPonteiro(self):
+        if(self._lookahead.decode('ascii') != ''):
+            self._file.seek(self._file.tell()-1)
+    
+    def status(self):
+        return self._sts
+    
+    def numErros(self):
+        return self._erros
+            
+    
