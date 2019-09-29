@@ -1,11 +1,31 @@
-class CodigoPyscal:  
-    def void(): 
-        integer num1; 
-        bool ex = true; 
-        while(ex): 
-            num = num + 1; 
-            if(num == 5): 
-                ex = false; 
-        end; 
-    end; 
+class Calculadora:
+
+   def double Soma (double valor1, double valor2):
+      double resultado;
+      resultado = valor1 + valor2;
+      return resultado;
+   end;
+
+   def double Subtracao (double valor1, double valor2):
+      double resultado;
+      resultado = valor1 - valor2;
+      return resultado;
+   end;
+
+   def double Multiplicacao (double valor1, double valor2):
+      integer resultado;
+      resultado = valor1 * valor2;
+      return resultado;
+   end;
+
+   def double Divisao (double valor1, double valor2):
+      integer resultado;
+
+      if (valor2 > 0.00):
+         resultado = valor1 / valor2;
+      else:
+         resultado = Not_A_Number;
+
+      return resultado;
+   end;
 end.

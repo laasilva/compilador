@@ -1,5 +1,6 @@
 import pandas as pd
 from interpreter import interpreter as inter
+from colors import colors
 
 class reader:
     def __init__(self, file, code):
@@ -9,6 +10,7 @@ class reader:
     # Lê o arquivo de código e monta array com as palavras, números e simbolos encontrados
     def read(self):
         word = ''
+        oper = ''
         # contador de linha e coluna
         with open(self.__file) as fp:
             #w = fp.read()
@@ -42,23 +44,55 @@ class reader:
                         keyword = intp.get_keyword(word)
                         operator = intp.get_operator(e)
                         if(keyword):
+                            print(colors.HEADER + word)
                             self.__code.append(word)
-                        if(operator):
+                        elif(operator):
+                            print(colors.WARNING + e)
                             if(e == ':'):
-                                self.__code.append(':')
+                                word = word[:-1]
+                                self.__code.append(e)
                             if(e == ';'):
-                                self.__code.append(';')
+                                word = word[:-1]
+                                self.__code.append(e)
                             if(e == '.'):
-                                self.__code.append('.')
+                                word = word[:-1]
+                                self.__code.append(e)
+                            if(e == ','):
+                                word = word[:-1]
+                                self.__code.append(e)
                             if(e == '('):
-                                self.__code.append('(')
+                                word = word[:-1]
+                                self.__code.append(e)
                             if(e == ')'):
-                                self.__code.append(')')
+                                word = word[:-1]
+                                self.__code.append(e)
                             if(e == '='):
-                                self.__code.append('=')
+                                word = word[:-1]
+                                self.__code.append(e)
+                            if(e == '<'):
+                                word = word[:-1]
+                                self.__code.append(e)
+                            if(e == '>'):
+                                word = word[:-1]
+                                self.__code.append(e)
+                            if(e == '/'):
+                                word = word[:-1]
+                                self.__code.append(e)
+                            if(e == '*'):
+                                word = word[:-1]
+                                self.__code.append(e)
+                            if(e == '-'):
+                                word = word[:-1]
+                                self.__code.append(e)
+                            if(e == '+'):
+                                word = word[:-1]
+                                self.__code.append(e)
+                        elif(word == ' ' and keyword != True and operator != True):
+                            intp.set_id(word)
+                            self.__code.append(e)
                     word = ''
-        #self.__code = [x for x in self.__code if x not in ['\n', '\t', '', ' ']]
-
+        self.__code = [x for x in self.__code if x not in ['\n', '\t', '', ' ']]
+        intp.get_id_csv
     # Retorna o array do código
     def get_code(self):
         return self.__code

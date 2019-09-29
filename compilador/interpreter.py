@@ -44,3 +44,10 @@ class interpreter:
                 else:
                     op = False
         return op
+
+    def set_id(self, word):
+        data = {'token': 'ID', 'lexema': word}
+        self.__ids.append(data, ignore_index=True)
+
+    def get_id_csv(self):
+        return self.__ids
