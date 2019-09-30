@@ -16,7 +16,7 @@ if __name__ == "__main__":
     print(clr.HEADER + "\n=>Lista de tokens\n" + clr.ENDC)
     tk = file.proximoToken()
     while (tk is not None and tk.getNome() != tag.EOF):
-        print(tk.toString(), 'Linha: ' + str(tk.getLinha()), 'Coluna: ' + str(tk.getColuna()))
+        print(tk.toString(), clr.UNDERLINE + 'Linha: ' + str(tk.getLinha()), 'Coluna: ' + str(tk.getColuna()) + clr.ENDC)
         tk = file.proximoToken()
         
     print(clr.HEADER + '\n=>Tabela de simbolos\n' + clr.ENDC)

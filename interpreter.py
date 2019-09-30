@@ -41,22 +41,28 @@ class interpreter:
     def printTabelaDeSimbolos(self):
         self._ts.printTS()
     
+    def contarLinha(self):
+        self._ncolumn = 1
+        self._nline += 1
+        
+    def contarColuna(self):
+        self._ncolumn += 1
+    
     def proximoToken(self):
         state = 0
         word = ""
         char = '\u0000' 
         lookahead = True
-
+    
         while(True):
             if(lookahead):
                 self._lookahead = self._file.read(1)
                 char = self._lookahead.decode('ascii')
             lookahead = True
             if(self._lookahead == b'\n'):
-                self._ncolumn = 1
-                self._nline += 1
+                self.contarLinha()
             elif(self._lookahead == b' '):
-                self._ncolumn += 1
+                self.contarColuna()
             if(state == 0):
                 if(char == ''):
                     return tkm(tag.EOF, "EOF", self._nline, self._ncolumn)
@@ -146,7 +152,7 @@ class interpreter:
                 elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
                     return tkm(tag.OP_ATR, '=', self._nline, self._ncolumn)
                 else:
-                    self.erroLexico('Caractere [' + char + '] inválido em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
+                    self.erroLexico('Caractere [' + char + '] inesperado em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
                     return None
                 return tkm(tag.OP_EQL, '=', self._nline, self._ncolumn)
             elif(state == 5):
@@ -176,18 +182,27 @@ class interpreter:
             elif(state == 17):
                 if(char == '='):
                     return tkm(tag.OP_EQL, '<=', self._nline, self._ncolumn)
-                else:
+                elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
                     return tkm(tag.OP_LESS, '<', self._nline, self._ncolumn)
+                else:
+                    self.erroLexico('Caractere [' + char + '] inesperado em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
+                    return None
             elif(state == 18):
                 if(char == '='):
                     return tkm(tag.OP_GRTEQ, '>=', self._nline, self._ncolumn)
-                else:
+                elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
                     return tkm(tag.OP_GRTR, '>', self._nline, self._ncolumn)
+                else:
+                    self.erroLexico('Caractere [' + char + '] inesperado em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
+                    return None
             elif(state == 19):
                 if(char == '='):
                     return tkm(tag.OP_DIF, '!=', self._nline, self._ncolumn)
-                else:
+                elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
                     return tkm(tag.OP_GRTR, '!', self._nline, self._ncolumn)
+                else:
+                    self.erroLexico('Caractere [' + char + '] inesperado em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
+                    return None
             elif(state == 20):
                 return tkm(tag.OP_AND, 'and', self._nline, self._ncolumn)
             elif(state == 21):

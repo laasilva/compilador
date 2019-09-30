@@ -24,7 +24,7 @@ class Calculadora:
       if (valor2 > 0.00):
          resultado = valor1 / valor2;
       else:
-         resultado = Not_A_Number;
+         resultado = NotANumber;
 
       return resultado;
    end;
