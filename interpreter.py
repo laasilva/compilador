@@ -52,11 +52,17 @@ class interpreter:
                 self._lookahead = self._file.read(1)
                 char = self._lookahead.decode('ascii')
             lookahead = True
+            if(self._lookahead == b'\n'):
+                self._ncolumn = 1
+                self._nline += 1
+            elif(self._lookahead == b' '):
+                self._ncolumn += 1
             if(state == 0):
                 if(char == ''):
                     return tkm(tag.EOF, "EOF", self._nline, self._ncolumn)
                 elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
                     state = 0
+                
                 elif(char.isalpha()):
                     word += char
                     state = 2
@@ -74,6 +80,7 @@ class interpreter:
                 elif(char == '/'):
                     state = 8
                 elif(char == '['):
+                    lookahead = False
                     state = 9
                 elif(char == ']'):
                     state = 10
@@ -116,6 +123,9 @@ class interpreter:
                     if(tk is None):
                         tk = tkm(tag.ID, word, self._nline, self._ncolumn)
                         self._ts.addToken(word, tk)
+                    else:
+                        self._ts.getToken(word).setLinha(self._nline)
+                        self._ts.getToken(word).setColuna(self._ncolumn)
                     return tk
             elif(state == 3):
                 if(char.isdigit()):
@@ -126,6 +136,9 @@ class interpreter:
                     if(tk is None):
                         tk = tkm(tag.NUM, word, self._nline, self._ncolumn)
                         self._ts.addToken(word, tk)
+                    else:
+                        self._ts.getToken(word).setLinha(self._nline)
+                        self._ts.getToken(word).setColuna(self._ncolumn)
                     return tk
             elif(state == 4):
                 if(char == '='):
