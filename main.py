@@ -26,4 +26,7 @@ if __name__ == "__main__":
     if(file.status()):
         print(clr.OKGREEN + '\n=> Compilado com sucesso\n')
     else:
-        print(clr.WARNING + '\n=> Compilado com avisos (' + str(file.numErros()) + ' erros léxicos).\n')
+        if(file.numErros() > 1):
+            print(clr.WARNING + '\n=> Compilado com avisos (' + str(file.numErros()) + ' erros léxicos).\n')
+        else:
+            print(clr.WARNING + '\n=> Compilado com aviso (' + str(file.numErros()) + ' erro léxico).\n')
