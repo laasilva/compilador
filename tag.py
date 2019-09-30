@@ -54,9 +54,15 @@ class tag(Enum):
    OP_DIF = 37
    OP_OBRACK = 38
    OP_CBRACK = 39
+   OP_QUOTE = 40
+   OP_COMMENT = 41
 
    # Identificador
-   ID = 41
+   ID = 42
 
    # Numeros
-   NUM = 42
+   NUM = 43
+
+   # String
+   STRING = 44
+   COMMENT = 45

@@ -22,6 +22,9 @@ class interpreter:
             self._ts = ts()
             self._sts = True
             self._erros = 0
+            
+            self._comment = False
+            self._string_tag = False
         except IOError:
             print(clr.FAIL + 'FATAL! Erro ao ler arquivo de código.')
             sys.exit(0)
@@ -63,6 +66,17 @@ class interpreter:
                 self.contarLinha()
             elif(self._lookahead == b' '):
                 self.contarColuna()
+
+            if(char == '#'):
+                self._comment = True
+                return tkm(tag.OP_COMMENT, '#', self._nline, self._ncolumn)
+
+            if(self._comment):
+                state = 25
+
+            if(self._string_tag):
+                state = 24
+
             if(state == 0):
                 if(char == ''):
                     return tkm(tag.EOF, "EOF", self._nline, self._ncolumn)
@@ -117,6 +131,11 @@ class interpreter:
                     state = 22
                 elif(char == 'false'):
                     state = 23
+                elif(char == '\"'):
+                    state = 24
+                elif(char == "#"):
+                    state = 25
+                    self._comment = True
                 else:
                     self.erroLexico('Caractere [' + char + '] inválido. (' + str(self._nline) + 
                                     ',' + str(self._ncolumn) + ')')
@@ -211,6 +230,27 @@ class interpreter:
                 return tkm(tag.OP_TRUE, 'true', self._nline, self._ncolumn)
             elif(state == 23):
                 return tkm(tag.OP_FALSE, 'false', self._nline, self._ncolumn)
+            elif(state == 24):
+                word += char
+                self._string_tag = True
+                if(char == '\"'):
+                    if(word == '\"'):
+                        tk = tkm(tag.STRING, "null", self._nline, self._ncolumn)
+                        self._ts.addToken("null", tk)    
+                    else:
+                        tk = tkm(tag.STRING, word[:-1], self._nline, self._ncolumn)
+                        self._ts.addToken(word[:-1], tk)
+                    self._string_tag = False
+                    return tk
+            elif(state == 25):
+                word += char
+                self._comment = True
+                if(self._lookahead == b'\n'):
+                    tk = tkm(tag.COMMENT, word[:-1], self._nline, self._ncolumn)
+                    self._ts.addToken(word[:-1], tk)
+                    self._comment = False
+                    return tk
+                
             # elif(state == 4):
             #     if(char == '='):
             #         return tkm(tag.OP_EQL, '==', self._nline, self._ncolumn)

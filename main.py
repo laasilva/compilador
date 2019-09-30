@@ -11,7 +11,7 @@ from colors import colors as clr
 from interpreter import interpreter as inter
 
 if __name__ == "__main__":
-    file = inter('code.txt')
+    file = inter('HelloPyscal.pys')
     
     print(clr.HEADER + "\n=>Lista de tokens\n" + clr.ENDC)
     tk = file.proximoToken()
@@ -26,4 +26,4 @@ if __name__ == "__main__":
     if(file.status()):
         print(clr.OKGREEN + '\n=> Compilado com sucesso\n')
     else:
-        print(clr.WARNING + '\n=> Compilado com aviso (' + str(file.numErros()) + ' erros léxicos).\n')
+        print(clr.WARNING + '\n=> Compilado com avisos (' + str(file.numErros()) + ' erros léxicos).\n')
