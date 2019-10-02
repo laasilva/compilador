@@ -56,13 +56,14 @@ class tag(Enum):
    OP_CBRACK = 39
    OP_QUOTE = 40
    OP_COMMENT = 41
+   OP_NEG = 42
 
    # Identificador
-   ID = 42
+   ID = 43
 
    # Numeros
-   NUM = 43
+   NUM = 44
 
    # String
-   STRING = 44
-   COMMENT = 45
+   STRING = 45
+   COMMENT = 46

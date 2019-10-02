@@ -17,16 +17,20 @@ class interpreter:
         try:
             self._file = open(file, 'rb')
             self._lookahead = 0
+            self._lookbehind = 0
             self._nline = 1
             self._ncolumn = 1
             self._ts = ts()
             self._sts = True
             self._erros = 0
             
+            self._anterior = 0
+            
             self._comment = False
             self._string_tag = False
             self._par = False
             self._brack = False
+            self._dash = False
         except IOError:
             print(clr.FAIL + 'FATAL! Erro ao ler arquivo de código.')
             sys.exit(0)
@@ -149,10 +153,12 @@ class interpreter:
                 if(char.isalnum() or char == '_'):
                     word += char
                 else:
-                    self.getPonteiro()
+                    self.voltaPonteiro()
                     tk = self._ts.getToken(word)
+                    self._anterior = tk
                     if(tk is None):
                         tk = tkm(tag.ID, word, self._nline, self._ncolumn)
+                        self._anterior = tk
                         self._ts.addToken(word, tk)
                     else:
                         self._ts.getToken(word).setLinha(self._nline)
@@ -162,10 +168,12 @@ class interpreter:
                 if(char.isdigit()):
                     word += char          
                 else:
-                    self.getPonteiro()
+                    self.voltaPonteiro()
                     tk = self._ts.getToken(word)
+                    self._anterior = tk
                     if(tk is None):
                         tk = tkm(tag.NUM, word, self._nline, self._ncolumn)
+                        self._anterior = tk
                         self._ts.addToken(word, tk)
                     else:
                         self._ts.getToken(word).setLinha(self._nline)
@@ -173,79 +181,108 @@ class interpreter:
                     return tk
             elif(state == 4):
                 if(char == '='):
+                    self._anterior = tkm(tag.OP_EQL, '==', self._nline, self._ncolumn)
                     return tkm(tag.OP_EQL, '==', self._nline, self._ncolumn)
-                elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
+                elif(char == ' ' or char == '\t' or char == '\n'):
+                    self._anterior = tkm(tag.OP_ATR, '=', self._nline, self._ncolumn)
                     return tkm(tag.OP_ATR, '=', self._nline, self._ncolumn)
                 else:
                     self.erroLexico('Caractere [' + char + '] inesperado em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
                     return None
+                self._anterior = tkm(tag.OP_EQL, '=', self._nline, self._ncolumn)
                 return tkm(tag.OP_EQL, '=', self._nline, self._ncolumn)
             elif(state == 5):
+                self._anterior = tkm(tag.OP_PLUS, '+', self._nline, self._ncolumn)
                 return tkm(tag.OP_PLUS, '+', self._nline, self._ncolumn)
             elif(state == 6):
-                return tkm(tag.OP_SUB, '-', self._nline, self._ncolumn)
+                if(self._anterior is not None and self._anterior.getNome() == tag.NUM):
+                    self._anterior = tkm(tag.OP_SUB, '-', self._nline, self._ncolumn)
+                    return tkm(tag.OP_SUB, '-', self._nline, self._ncolumn)
+                else:
+                    self._anterior = tkm(tag.OP_NEG, '-', self._nline, self._ncolumn)
+                    return tkm(tag.OP_NEG, '-', self._nline, self._ncolumn)
             elif(state == 7):
+                self._anterior = tkm(tag.OP_MULT, '*', self._nline, self._ncolumn)
                 return tkm(tag.OP_MULT, '*', self._nline, self._ncolumn)
             elif(state == 8):
+                self._anterior = tkm(tag.OP_SLSH, '/', self._nline, self._ncolumn)
                 return tkm(tag.OP_SLSH, '/', self._nline, self._ncolumn)
             elif(state == 9):
                 self._brack = True
+                self._anterior = tkm(tag.OP_OBRACK, '[', self._nline, self._ncolumn)
                 return tkm(tag.OP_OBRACK, '[', self._nline, self._ncolumn)
             elif(state == 10):
+                self._anterior = tkm(tag.OP_CBRACK, ']', self._nline, self._ncolumn)
                 return tkm(tag.OP_CBRACK, ']', self._nline, self._ncolumn)
             elif(state == 11):
                 self._par = True
+                self._anterior = tkm(tag.OP_OPAR, '(', self._nline, self._ncolumn)
                 return tkm(tag.OP_OPAR, '(', self._nline, self._ncolumn)
             elif(state == 12):
                 self._par = False
+                self._anterior = tkm(tag.OP_CPAR, ')', self._nline, self._ncolumn)
                 return tkm(tag.OP_CPAR, ')', self._nline, self._ncolumn)
             elif(state == 13):
                 if(char == '' or char == ' '):
+                    self._anterior = tkm(tag.OP_DOT, '.', self._nline, self._ncolumn)
                     return tkm(tag.OP_DOT, '.', self._nline, self._ncolumn)
                 else:
                     self.erroLexico('Caractere [' + char + '] inesperado em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
                     return None
             elif(state == 14):
                 if(char == '' or char == ' '):
+                    self._anterior = tkm(tag.OP_COMMA, ',', self._nline, self._ncolumn)
                     return tkm(tag.OP_COMMA, ',', self._nline, self._ncolumn)
                 else:
                     self.erroLexico('Caractere [' + char + '] inesperado em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
                     return None
             elif(state == 15):
+                self._anterior = tkm(tag.OP_COL, ':', self._nline, self._ncolumn)
                 return tkm(tag.OP_COL, ':', self._nline, self._ncolumn)
             elif(state == 16):
+                self._anterior = tkm(tag.OP_SCOL, ';', self._nline, self._ncolumn)
                 return tkm(tag.OP_SCOL, ';', self._nline, self._ncolumn)
             elif(state == 17):
                 if(char == '='):
+                    self._anterior = tkm(tag.OP_EQL, '<=', self._nline, self._ncolumn)
                     return tkm(tag.OP_EQL, '<=', self._nline, self._ncolumn)
                 elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
+                    self._anterior = tkm(tag.OP_LESS, '<', self._nline, self._ncolumn)
                     return tkm(tag.OP_LESS, '<', self._nline, self._ncolumn)
                 else:
                     self.erroLexico('Caractere [' + char + '] inesperado em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
                     return None
             elif(state == 18):
                 if(char == '='):
+                    self._anterior = tkm(tag.OP_GRTEQ, '>=', self._nline, self._ncolumn)
                     return tkm(tag.OP_GRTEQ, '>=', self._nline, self._ncolumn)
                 elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
+                    self._anterior = tkm(tag.OP_GRTR, '>', self._nline, self._ncolumn)
                     return tkm(tag.OP_GRTR, '>', self._nline, self._ncolumn)
                 else:
                     self.erroLexico('Caractere [' + char + '] inesperado em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
                     return None
             elif(state == 19):
                 if(char == '='):
+                    self._anterior = tkm(tag.OP_DIF, '!=', self._nline, self._ncolumn)
                     return tkm(tag.OP_DIF, '!=', self._nline, self._ncolumn)
                 elif(char == ' ' or char == '\t' or char == '\n' or char == '\r'):
+                    self._anterior = tkm(tag.OP_GRTR, '!', self._nline, self._ncolumn)
                     return tkm(tag.OP_GRTR, '!', self._nline, self._ncolumn)
                 else:
                     self.erroLexico('Caractere [' + char + '] inesperado em (' + str(self._nline) + ',' + str(self._ncolumn) + ')')
                     return None
             elif(state == 20):
+                self._anterior = tkm(tag.OP_AND, 'and', self._nline, self._ncolumn)
                 return tkm(tag.OP_AND, 'and', self._nline, self._ncolumn)
             elif(state == 21):
+                self._anterior = tkm(tag.OP_OR, 'or', self._nline, self._ncolumn)
                 return tkm(tag.OP_OR, 'or', self._nline, self._ncolumn)
             elif(state == 22):
+                self._anterior = tkm(tag.OP_TRUE, 'true', self._nline, self._ncolumn)
                 return tkm(tag.OP_TRUE, 'true', self._nline, self._ncolumn)
             elif(state == 23):
+                self._anterior = tkm(tag.OP_FALSE, 'false', self._nline, self._ncolumn)
                 return tkm(tag.OP_FALSE, 'false', self._nline, self._ncolumn)
             elif(state == 24):
                 word += char
@@ -253,9 +290,11 @@ class interpreter:
                 if(char == '\"'):
                     if(word == '\"'):
                         tk = tkm(tag.STRING, "null", self._nline, self._ncolumn)
+                        self._anterior = tk
                         self._ts.addToken("null", tk)    
                     else:
                         tk = tkm(tag.STRING, word[:-1], self._nline, self._ncolumn)
+                        self._anterior = tk
                         self._ts.addToken(word[:-1], tk)
                     self._string_tag = False
                     return tk
@@ -276,7 +315,7 @@ class interpreter:
             #         return None
         
 
-    def getPonteiro(self):
+    def voltaPonteiro(self):
         if(self._lookahead.decode('ascii') != ''):
             self._file.seek(self._file.tell()-1)
     

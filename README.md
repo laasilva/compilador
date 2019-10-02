@@ -3,6 +3,10 @@ Aplicação feita em __*Python*__ para a aula de __*Compiladores*__
 
 ---
 
+github: https://github.com/cmdrlias/compilador/
+
+---
+
 ### Fase 1
 __Análise Léxica__:
 * Definição de padrões através do uso de palavras-chave

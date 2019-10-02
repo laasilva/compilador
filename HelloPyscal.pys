@@ -9,8 +9,10 @@
 			writeln("");
 			write("Este eh um codigo de exemplo em Pyscal!");
 			write("");
+			int a = 1 - 2
+			int b = -a
 			if(podeEntregarDepois()):
 				write("Pode, mas nao tem ponto.");
-			end;
+			end;.
 		end;
 	end.
