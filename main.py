@@ -8,10 +8,10 @@ Created on Thu Sep 26 19:57:00 2019
 from token_model import token_model as tkm
 from tag import tag
 from colors import colors as clr
-from interpreter import interpreter as inter
+from lexer import lexer as lexer
 
 if __name__ == "__main__":
-    file = inter('HelloPyscal.pys')
+    file = lexer('HelloPyscal.pys')
     
     print(clr.HEADER + "\n=>Lista de tokens\n" + clr.ENDC)
     tk = file.proximoToken()

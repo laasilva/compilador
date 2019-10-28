@@ -12,7 +12,7 @@ from token_model import token_model as tkm
 from tag import tag
 from colors import colors as clr
 
-class interpreter:
+class lexer:
     def __init__(self, file):
         try:
             self._file = open(file, 'rb')
