@@ -9,9 +9,13 @@ from token_model import token_model as tkm
 from tag import tag
 from colors import colors as clr
 from lexer import lexer as lexer
+from parser import parser as parser
 
 if __name__ == "__main__":
     file = lexer('HelloPyscal.pys')
+    parser = parser(file)
+
+    parser.programa()
     
     print(clr.HEADER + "\n=>Lista de tokens\n" + clr.ENDC)
     tk = file.proximoToken()

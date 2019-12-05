@@ -63,7 +63,13 @@ class tag(Enum):
 
    # Numeros
    NUM = 44
+   NUM_INTEIRO = 47
+   NUM_DOUBLE = 48
 
    # String
    STRING = 45
    COMMENT = 46
+
+   LIT = 49
+
+   TIPO_VAZIO = 50

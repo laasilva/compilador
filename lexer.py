@@ -68,6 +68,9 @@ class lexer:
                 self._lookahead = self._file.read(1)
                 char = self._lookahead.decode('ascii')
             lookahead = True
+
+            if (self._lookahead == b'\t'):
+                self._ncolumn += 4
             if(self._lookahead == b'\n'):
                 self.contarLinha()
             elif(self._lookahead == b' '):
@@ -75,7 +78,6 @@ class lexer:
 
             if(char == '#'):
                 self._comment = True
-                return tkm(tag.OP_COMMENT, '#', self._nline, self._ncolumn)
 
             if(self._comment):
                 state = 25
@@ -104,6 +106,11 @@ class lexer:
                 elif(char == '+'):
                     state = 5
                 elif(char == '-'):
+                    x = self.voltaPonteiro()
+                    if  x == tag.ID or x == tag.NUM_INTEIRO:
+                        estado = 28
+                    else:
+                        estado = 29
                     state = 6
                 elif(char == '*'):
                     state = 7
@@ -147,7 +154,7 @@ class lexer:
                     state = 25
                     self._comment = True
                 else:
-                    self.erroLexico('Caractere [' + char + '] inválido. (' + str(self._nline) + 
+                    self.erroLexico('[Erro Sintático] Caractere "' + char + '" inválido. (' + str(self._nline) + 
                                     ',' + str(self._ncolumn) + ')')
             elif(state == 2):
                 if(char.isalnum() or char == '_'):
@@ -195,6 +202,11 @@ class lexer:
                 self._anterior = tkm(tag.OP_PLUS, '+', self._nline, self._ncolumn)
                 return tkm(tag.OP_PLUS, '+', self._nline, self._ncolumn)
             elif(state == 6):
+                if (char == '-'):
+                    return tkm(tag.OP_NEG, "-", self._nline, self._ncolumn)
+                else:
+                    self.retornaPonteiro()
+                    return tkm(tag.OP_SUB, "-", self.n_line, self.n_column)
                 if(self._anterior is not None and self._anterior.getNome() == tag.NUM):
                     self._anterior = tkm(tag.OP_SUB, '-', self._nline, self._ncolumn)
                     return tkm(tag.OP_SUB, '-', self._nline, self._ncolumn)
@@ -299,13 +311,14 @@ class lexer:
                     self._string_tag = False
                     return tk
             elif(state == 25):
-                word += char
-                self._comment = True
                 if(self._lookahead == b'\n'):
-                    tk = tkm(tag.COMMENT, word[:-1], self._nline, self._ncolumn)
-                    self._ts.addToken(word[:-1], tk)
+                    state = 0
+                    self._nline += 1
+                    self._ncolumn = 0
                     self._comment = False
-                    return tk
+            elif(state == 26):
+                self.retornaPonteiro()
+                return tkm(tag.OP_SUB, "-", self._nline, self._ncolumn)
                 
             # elif(state == 4):
             #     if(char == '='):

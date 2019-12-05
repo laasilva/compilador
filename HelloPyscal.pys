@@ -1,10 +1,10 @@
-   #programa exemplo em Pyscal
+	#pr
 	class Pressao:
 		def bool podeEntregarDepois():
 			return false;
 		end;
 
-		defstatic void main(String[] args):
+		def void main(String[] args):
 			write("Caros alunos de Compiladores,");
 			writeln("");
 			write("Este eh um codigo de exemplo em Pyscal!");
