@@ -1,5 +1,5 @@
 from tag import tag
 
-class No():
+class no():
    def __init__(self):
       self.tipo = tag.TIPO_VAZIO

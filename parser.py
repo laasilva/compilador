@@ -1,9 +1,11 @@
 import sys
+import copy
 
 from ts import ts
 from token_model import token_model as tkm
 from tag import tag
 from colors import colors as clr
+from no import no
 
 class parser:
     def __init__(self, lexer):
@@ -49,10 +51,16 @@ class parser:
             sys.exit(0)
     
     def classe(self):
+        tmp = copy.copy(self.token)
+
         if(self.eat(tag.KW_CLASS)):
             if(not self.eat(tag.ID)):
                 self.erroSintatico('"id" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
+            else:
+                self.lexer._ts.removeToken(tmp.getLexema())
+                tmp.setTipo(tag.VAZIO)
+                self.lexer._ts.addToken(tmp.getLexema(), tmp)
 
             if(not self.eat(tag.OP_COL)):
                 self.erroSintatico('":" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
@@ -72,10 +80,14 @@ class parser:
                 + ' - Encontrado: ' + self.token.getLexema())
     
     def declaraID(self):
+        tmp = copy.copy(self.token)
+
         if(self.eat(tag.KW_BOOL) or self.eat(tag.KW_INT) \
                 or self.eat(tag.KW_STRING) or self.eat(tag.KW_DOUBLE) \
                 or self.eat(tag.KW_VOID)):
-            self.tipoPrimitivo()
+            self.lexer._ts.removeToken(tmp.getLexema());
+            tmp.setTipo(self.tipoPrimitivo().tipo)
+            self.lexer._ts.addToken(tmp.getLexema(), tmp)
             if(not self.eat(tag.ID)):
                 self.erroSintatico('"id" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
@@ -99,14 +111,20 @@ class parser:
     def listaFuncaoLinha(self):
         if(self.eat(tag.KW_DEF)):
             self.funcao()
-            self.listaFuncaoLinha()
+            self.listaFuncao()
 
     def funcao(self):
+        tmp = copy.copy(self.token)
         if(self.eat(tag.KW_DEF)):
             self.tipoPrimitivo()
             if(not self.eat(tag.ID)):
                 self.erroSintatico('"id" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
+            else:
+                self.lexer._ts.removeToken(tmp.getLexema())
+                tmp.setTipo(tag.VAZIO)
+                self.lexer._ts.addToken(tmp.getLexema(), tmp)
+
             if(not self.eat(tag.OP_OPAR)):
                 self.erroSintatico('"(" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
@@ -172,17 +190,14 @@ class parser:
             if not self.eat(tag.EOF): self.listaArgLinha()
 
     def arg(self):
-        if(self.eat(tag.KW_VOID) or self.eat(tag.KW_STRING) \
-                or self.eat(tag.KW_BOOL) or self.eat(tag.KW_INT) \
-                or self.eat(tag.KW_DOUBLE)):
-            self.tipoPrimitivo()
-            if(not self.eat(tag.ID)):
-                self.sinalizaErroSintatico("Esperado \"ID\"; encontrado " + "\"" + self.token.getLexema() + "\"")
+        tmp = copy.copy(self.token)
+        self.tipoPrimitivo()            
+        if(not self.eat(tag.ID)):
+            self.sinalizaErroSintatico("Esperado \"ID\"; encontrado " + "\"" + self.token.getLexema() + "\"")
         else:
-            self.skip('Declaração de variável esperada em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
-                + ' - Encontrado: ' + self.token.getLexema())
-            if(not self.eat(tag.EOF)): 
-                self.arg()
+            self.lexer._ts.removeToken(tmp.getLexema())
+            tmp.setTipo(tag.VAZIO)
+            self.lexer._ts.addToken(tmp.getLexema(), tmp)
 
     def retorno(self):
         if(self.eat(tag.KW_RETURN)):
@@ -198,30 +213,38 @@ class parser:
                 self.retorno()
 
     def main(self):
-        if self.eat(tag.KW_DEF):
-            if not self.eat(tag.KW_VOID):
+        tmp = copy.copy(self.token)
+        if(self.eat(tag.KW_STATIC)):
+            if(not self.eat(tag.KW_VOID)):
                 self.erroSintatico('"void" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
-            if not self.eat(tag.KW_MAIN):
+            if(not self.eat(tag.KW_MAIN)):
                 self.erroSintatico('"main" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
-            if not self.eat(tag.OP_OPAR):
+            if(not self.eat(tag.OP_OPAR)):
                 self.erroSintatico('"(" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
-            if not self.eat(tag.OP_CPAR):
-                self.erroSintatico('")" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
-                + ' - Encontrado: ' + self.token.getLexema())
-            if not self.eat(tag.KW_STRING):
+            
+            if(not self.eat(tag.KW_STRING)):
                 self.erroSintatico('"string" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
-            if not self.eat(tag.OP_OBRACK):
+            if(not self.eat(tag.OP_OBRACK)):
                 self.erroSintatico('"[" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
-            if not self.eat(tag.OP_CBRACK):
+            if(not self.eat(tag.OP_CBRACK)):
                 self.erroSintatico('"]" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
-            if not self.eat(tag.ID):
+            if(not self.eat(tag.ID)):
                 self.erroSintatico('"id" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
+                + ' - Encontrado: ' + self.token.getLexema())
+            
+            
+            self.lexer._ts.removeToken(tmp.getLexema())
+            tmp.setTipo(tag.STRING)
+            self.lexer._ts.addToken(tmp.getLexema(), tmp)
+
+            if(not self.eat(tag.OP_CPAR)):
+                self.erroSintatico('")" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
             if(not self.eat(tag.OP_SCOL)):
                 self.erroSintatico('":" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
@@ -237,7 +260,7 @@ class parser:
                 self.erroSintatico('";" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
         else:
-            self.skip('"def" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
+            self.skip('"defstatic" esperado em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
                 + ' - Encontrado: ' + self.token.getLexema())
             if(not self.eat(tag.EOF)): 
                 self.main()
@@ -280,8 +303,20 @@ class parser:
                 self.listaCmdLinha()
 
     def cmd(self):
+        tmp = copy.copy(self.token)
+
         if(self.eat(tag.ID)):
-            self.cmdAtribFunc()
+            if (tmp.getTipo() == None):
+                self.erroSemantico('ID esperada em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
+                + ' - Encontrado: ' + self.token.getLexema())
+                #sys.exit(0)
+
+            noCmdAtribFunc = self.CmdAtribFunc()
+
+            if (noCmdAtribFunc.tipo != tag.VAZIO and tmp.getTipo() != noCmdAtribFunc.tipo):
+                self.erroSemantico('Tipos incompatíveis em '+ str(self.token.getLinha()) + ', ' + str(self.token.getColuna()) 
+                + ' - Encontrado: ' + self.token.getLexema())
+                #sys.exit(0)
         elif(self.eat(tag.KW_IF)):
             self.cmdIf()
         elif(self.eat(tag.KW_WHILE)):
@@ -566,9 +601,17 @@ class parser:
                 self.exp3Linha()
 
     def exp4(self):
+        tmp = copy.copy(self.token)
+        noExp4 = no()
         if(self.eat(tag.ID)):
             self.exp4Linha()
-            return
+            noExp4.tipo = tmp.getTipo()
+            if (noExp4.tipo == None ):
+                noExp4.tipo = tag.TIPO_ERRO
+                self.sinalizaErroSemantico("Erro, ID nao declado")
+                sys.exit(0)
+            
+            return noExp4
         elif(self.eat(tag.OP_NEGACAO) or self.eat(tag.OP_DIFERENTE)):
             self.exp4()
             return

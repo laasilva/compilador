@@ -6,6 +6,7 @@ Created on Thu Sep 26 20:32:56 2019
 @author: cmdrlias
 """
 from colors import colors as clr
+from tag import tag
 
 class token_model:
     def __init__(self, nome, lexema, linha, coluna):
@@ -13,6 +14,7 @@ class token_model:
         self.lexema = lexema
         self.linha = linha
         self.coluna = coluna
+        self.tipo = tag.VAZIO
 
     def getNome(self):
         return self.nome
@@ -31,6 +33,12 @@ class token_model:
 
     def setColuna(self, coluna):
         self.coluna = coluna
+    
+    def getTipo(self):
+        return self.tipo
+
+    def setTipo(self, tipo):
+      self.tipo = tipo
 
     def toString(self):
         return "<" + clr.BOLD + str(self.nome.name) + clr.ENDC + ", \"" + str(self.lexema) + "\">"

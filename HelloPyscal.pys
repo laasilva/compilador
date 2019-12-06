@@ -1,18 +1,15 @@
-	#pr
-	class Pressao:
-		def bool podeEntregarDepois():
-			return false;
-		end;
-
-		def void main(String[] args):
+class Pressao:
+	def:
+		defstatic void main(String[] args):
 			write("Caros alunos de Compiladores,");
-			writeln("");
+			write("b");
 			write("Este eh um codigo de exemplo em Pyscal!");
-			write("");
-			int a = 1 - 2
-			int b = -a
+			write("a");
+			a = 1-1;
+			-1;
 			if(podeEntregarDepois()):
-				write("Pode, mas nao tem ponto.");
-			end;.
+				writeln("Pode, mas nao tem ponto.");
+			end;
 		end;
-	end.
+	end;
+end.

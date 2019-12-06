@@ -14,14 +14,16 @@ from parser import parser as parser
 if __name__ == "__main__":
     file = lexer('HelloPyscal.pys')
     parser = parser(file)
-
-    parser.programa()
+ 
+    # print(clr.HEADER + "\n=>Lista de tokens\n" + clr.ENDC)
+    # tk = file.proximoToken()
+    # while (tk is not None and tk.getNome() != tag.EOF):
+    #     print(tk.toString(), clr.UNDERLINE + 'Linha: ' + str(tk.getLinha()), 'Coluna: ' + str(tk.getColuna()) + clr.ENDC)
+    #     tk = file.proximoToken()
     
-    print(clr.HEADER + "\n=>Lista de tokens\n" + clr.ENDC)
-    tk = file.proximoToken()
-    while (tk is not None and tk.getNome() != tag.EOF):
-        print(tk.toString(), clr.UNDERLINE + 'Linha: ' + str(tk.getLinha()), 'Coluna: ' + str(tk.getColuna()) + clr.ENDC)
-        tk = file.proximoToken()
+    parser.programa()
+
+    parser.lexer.closeFile()
         
     print(clr.HEADER + '\n=>Tabela de simbolos\n' + clr.ENDC)
     file.printTabelaDeSimbolos()

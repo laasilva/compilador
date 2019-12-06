@@ -68,8 +68,9 @@ class tag(Enum):
 
    # String
    STRING = 45
+   VAZIO = 50
    COMMENT = 46
 
    LIT = 49
-
-   TIPO_VAZIO = 50
+   
+   

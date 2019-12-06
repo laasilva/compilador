@@ -39,6 +39,9 @@ class ts:
    def addToken(self, lexema, tk):
       self.ts[lexema] = tk
 
+   def removeToken(self, lexema):
+      self.ts.pop(lexema)
+
    def printTS(self):
       for k, t in (self.ts.items()):
          print(clr.OKBLUE + k + ":" + clr.ENDC, t.toString())
